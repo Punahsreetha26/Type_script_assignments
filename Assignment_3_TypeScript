@@ -1,0 +1,238 @@
+Basic TypeScript Problems
+1)one: Variables & Types
+Problem:
+Declare the following variables with appropriate TypeScript types:
+A string variable userName with a value "John Doe".
+A number variable age with a value 25.
+A boolean variable isStudent with a value true.
+Bonus: Try to assign a different type to these variables and see what happens!
+
+
+Answers:
+var userName : string = "John Doe"
+var age : number = 25
+var isStudent : boolean = true
+
+
+
+
+
+
+
+
+2)two: Functions & Type Annotations
+Problem:
+Write a function add that takes two numbers as arguments and returns their sum.
+typescriptCopyEditfunction add(a, b) {
+   return a + b;
+}
+
+Answers :
+function add(a: number, b: number): number {
+    return a + b;
+}
+
+ 
+:white_tick: Fix this function by adding TypeScript type annotations.
+
+
+
+
+
+
+
+
+
+3)three: Function with Optional Parameters
+Problem:
+ Modify the function below to make the second parameter optional:
+typescriptCopyEditfunction greet(name: string, message: string) {
+    return `${message}, ${name}!`;
+}
+white_tick: If the message is not provided, default to "Hello".
+
+Answer :
+function greet(name: string, message?: string) {
+    return `${message ?? "Hello"}, ${name}!`;
+}
+
+
+
+
+
+
+
+
+
+
+4):four: Union Types
+Problem:
+ Define a function displayId that accepts either a number or a string as an argument and logs it.
+typescriptCopyEditfunction displayId(id) {
+    console.log(`ID: ${id}`);
+}
+ 
+:white_tick: Fix this function using union types.
+
+Answers:
+typescriptCopyEditfunction displayId(id: number | string) {
+    console.log(`ID: ${id}`);
+}
+
+
+
+
+
+
+
+
+
+5)five: Arrays & Tuples
+Problem:
+Declare an array numbers that only holds numbers.
+Create a tuple person that contains a string (name) and a number (age).
+Example:
+typescriptCopyEdit// numbers: [10, 20, 30]// person: ["Alice", 30]
+
+Answers:
+let nums : number[] : [1, 2, 3, 4, 5, 6];
+let person: [string, number] = ["Punah", 20];
+
+
+
+
+
+
+
+
+
+
+
+
+6)six: Interfaces
+Problem:
+Define an interface Person with the following properties:
+name (string)
+age (number)
+email (string)
+Create a variable user that implements this interface.
+
+Answer:
+interface Person {
+    name: string;
+    age: number;
+    email: string;
+}
+
+const user: Person = {
+    name: "Punah",
+    age: 20,
+    email: "punah@hotmail.com"
+};
+
+
+
+
+
+
+
+
+
+
+
+7)seven: Type Aliases
+Problem:
+ Create a type alias Employee that includes:
+id (number)
+name (string)
+role ("admin" | "manager" | "employee")
+Define an employee variable of type Employee.
+
+Employee:
+
+type Employee = {
+    id: number;
+    name: string;
+    role: "admin" | "manager" | "employee";
+};
+
+const employee: Employee = {
+    id: 24,
+    name: "Sreetha",
+    role: "employee"
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+8)eight: Enum
+Problem:
+Define an enum Color with values: "Red", "Green", and "Blue".
+Create a variable favoriteColor of type Color.
+
+Answers:
+
+enum Color {
+    Red = "Red",
+    Green = "Green",
+    Blue = "Blue"
+}
+
+const favoriteColor: Color = Color.Blue;
+
+
+
+
+
+9)nine: Readonly & Partial
+Problem:
+Create a readonly object for user information.
+Use Partial<T> to make a type where all properties are optional.
+Example:
+typescriptCopyEditinterface User {
+   id: number;
+   name: string;
+   email: string;
+}
+const user: Readonly<User> = { id: 1, name: "Alice", email: "alice@example.com" };// user.name = "Bob"; ❌ This should give an error!let newUser: Partial<User> = { name: "Bob" }; // ✅ Allowed
+
+interface User {
+    id: number;
+    name: string;
+    email: string;
+}
+
+const user: Readonly<User> = { id: 1, name: "space", email: "space@gmail.com" };
+let newUser: Partial<User> = { name: "Tom" }; 
+
+
+
+
+
+
+
+
+
+
+
+10)keycap_ten: Classes in TypeScript
+Problem:
+ Create a class Car with the following properties:
+brand (string)
+model (string)
+year (number)
+Add a method getCarInfo() that returns a string like:
+"Toyota Corolla (2020)"
+
+
+
+
