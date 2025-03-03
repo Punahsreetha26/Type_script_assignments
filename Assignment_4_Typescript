@@ -272,6 +272,97 @@ CheckingAccount should allow overdraft up to a certain limit
 Tasks
 Implement BankAccount, SavingsAccount, and CheckingAccount
 Create instances and test deposit/withdraw functions
+
+Answer:
+
+abstract class BankAccount {
+  protected accountNumber: string;
+  protected balance: number;
+
+  constructor(accountNumber: string, balance: number) {
+    this.accountNumber = accountNumber;
+    this.balance = balance;
+  }
+
+  deposit(amount: number): void {
+    if (amount > 0) {
+      this.balance += amount;
+      console.log(`Deposited $${amount}. New balance: $${this.balance}`);
+    } else {
+      console.log("Deposit amount must be positive.");
+    }
+  }
+
+  abstract withdraw(amount: number): boolean;
+
+  getBalance(): number {
+    return this.balance;
+  }
+}
+
+class SavingsAccount extends BankAccount {
+  private withdrawalLimit: number;
+
+  constructor(accountNumber: string, balance: number, withdrawalLimit: number) {
+    super(accountNumber, balance);
+    this.withdrawalLimit = withdrawalLimit;
+  }
+
+  withdraw(amount: number): boolean {
+    if (amount > 0 && amount <= this.balance && amount <= this.withdrawalLimit) {
+      this.balance -= amount;
+      console.log(`Withdrawn $${amount}. New balance: $${this.balance}`);
+      return true;
+    }
+    console.log("Withdrawal failed: Exceeds limit or insufficient balance.");
+    return false;
+  }
+}
+
+class CheckingAccount extends BankAccount {
+  private overdraftLimit: number;
+
+  constructor(accountNumber: string, balance: number, overdraftLimit: number) {
+    super(accountNumber, balance);
+    this.overdraftLimit = overdraftLimit;
+  }
+
+  withdraw(amount: number): boolean {
+    if (amount > 0 && this.balance - amount >= -this.overdraftLimit) {
+      this.balance -= amount;
+      console.log(`Withdrawn $${amount}. New balance: $${this.balance}`);
+      return true;
+    }
+    console.log("Withdrawal failed: Exceeds overdraft limit.");
+    return false;
+  }
+}
+
+const savings = new SavingsAccount("Punah24", 4000, 500);
+savings.deposit(200);
+savings.withdraw(300);
+savings.withdraw(600);
+console.log(`Final Savings Balance: $${savings.getBalance()}`);
+
+const checking = new CheckingAccount("Sreetha", 800, 400);
+checking.deposit(100);
+checking.withdraw(700);
+checking.withdraw(200);
+console.log(`Final Checking Balance: $${checking.getBalance()}`);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Exercise 2: Interface for Payment System
 Create an interface PaymentMethod with:
  
@@ -284,6 +375,141 @@ Each class should have a balance and implement pay() and refund()
 Tasks
 Implement PaymentMethod, CreditCard, DebitCard, and UPI
 Create instances and simulate payments & refunds
+
+Answer:
+abstract class PaymentGateway {
+  processPayment(amount: number): void {
+    console.log(`Processing payment of $${amount}`);
+  }
+
+  processRefund(amount: number): void {
+    console.log(`Processing refund of $${amount}`);
+  }
+
+  abstract validateTransaction(transactionId: string): boolean;
+}
+
+interface SecurePayment {
+  authenticateUser(userId: string): boolean;
+}
+
+interface PaymentMethod {
+  pay(amount: number): void;
+  refund(amount: number): void;
+}
+
+class PayPal extends PaymentGateway implements SecurePayment {
+  authenticateUser(userId: string): boolean {
+    console.log(`Authenticating user: ${userId}`);
+    return true; // Assuming authentication is always successful
+  }
+
+  validateTransaction(transactionId: string): boolean {
+    console.log(`Validating transaction: ${transactionId}`);
+    return true; // Assuming transaction validation is always successful
+  }
+}
+
+class CreditCard implements PaymentMethod {
+  private balance: number;
+
+  constructor(balance: number) {
+    this.balance = balance;
+  }
+
+  pay(amount: number): void {
+    if (amount <= this.balance) {
+      this.balance -= amount;
+      console.log(`Paid $${amount} using Credit Card. Remaining balance: $${this.balance}`);
+    } else {
+      console.log("Insufficient balance in Credit Card.");
+    }
+  }
+
+  refund(amount: number): void {
+    this.balance += amount;
+    console.log(`Refunded $${amount} to Credit Card. New balance: $${this.balance}`);
+  }
+}
+
+class DebitCard implements PaymentMethod {
+  private balance: number;
+
+  constructor(balance: number) {
+    this.balance = balance;
+  }
+
+  pay(amount: number): void {
+    if (amount <= this.balance) {
+      this.balance -= amount;
+      console.log(`Paid $${amount} using Debit Card. Remaining balance: $${this.balance}`);
+    } else {
+      console.log("Insufficient balance in Debit Card.");
+    }
+  }
+
+  refund(amount: number): void {
+    this.balance += amount;
+    console.log(`Refunded $${amount} to Debit Card. New balance: $${this.balance}`);
+  }
+}
+
+class UPI implements PaymentMethod {
+  private balance: number;
+
+  constructor(balance: number) {
+    this.balance = balance;
+  }
+
+  pay(amount: number): void {
+    if (amount <= this.balance) {
+      this.balance -= amount;
+      console.log(`Paid $${amount} using UPI. Remaining balance: $${this.balance}`);
+    } else {
+      console.log("Insufficient balance in UPI account.");
+    }
+  }
+
+  refund(amount: number): void {
+    this.balance += amount;
+    console.log(`Refunded $${amount} to UPI account. New balance: $${this.balance}`);
+  }
+}
+
+const paypal = new PayPal();
+paypal.processPayment(200);
+paypal.processRefund(50);
+console.log(`User authenticated: ${paypal.authenticateUser("Punah24")}`);
+console.log(`Transaction valid: ${paypal.validateTransaction("Sreetha26")}`);
+
+const creditCard = new CreditCard(1000);
+creditCard.pay(300);
+creditCard.refund(80);
+
+const debitCard = new DebitCard(500);
+debitCard.pay(200);
+debitCard.refund(50);
+
+const upi = new UPI(10000);
+upi.pay(300);
+upi.refund(200);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Exercise 3: Combining Abstract Class and Interface
 Create:
  
@@ -303,6 +529,62 @@ Implements validateTransaction() and authenticateUser()
 Tasks
 Implement PaymentGateway, SecurePayment, and PayPal
 Create an instance of PayPal and test methods
+
+Answer:
+
+abstract class PaymentGateway {
+  processPayment(amount: number): void {
+    console.log(`Processing payment of $${amount}`);
+  }
+
+  processRefund(amount: number): void {
+    console.log(`Processing refund of $${amount}`);
+  }
+
+  abstract validateTransaction(transactionId: string): boolean;
+}
+
+interface SecurePayment {
+  authenticateUser(userId: string): boolean;
+}
+
+class PayPal extends PaymentGateway implements SecurePayment {
+  authenticateUser(userId: string): boolean {
+    console.log(`Authenticating user: ${userId}`);
+    return true; 
+  }
+
+  validateTransaction(transactionId: string): boolean {
+    console.log(`Validating transaction: ${transactionId}`);
+    return true; 
+  }
+}
+
+const paypal = new PayPal();
+paypal.processPayment(400);
+paypal.processRefund(100);
+console.log(`User authenticated: ${paypal.authenticateUser("Punah24")}`);
+console.log(`Transaction valid: ${paypal.validateTransaction("Sreetha")}`);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Exercise 4: Multiple Interface Implementation
 Create:
  
@@ -315,3 +597,151 @@ Stores loan and insurance details in properties
 Tasks
 Implement Loan, Insurance, and Customer
 Create an instance of Customer and test loan & insurance applications
+
+
+Answers:
+
+abstract class PaymentGateway {
+  processPayment(amount: number): void {
+    console.log(`Processing payment of $${amount}`);
+  }
+
+  processRefund(amount: number): void {
+    console.log(`Processing refund of $${amount}`);
+  }
+
+  abstract validateTransaction(transactionId: string): boolean;
+}
+
+interface SecurePayment {
+  authenticateUser(userId: string): boolean;
+}
+
+interface PaymentMethod {
+  pay(amount: number): void;
+  refund(amount: number): void;
+}
+
+interface Loan {
+  applyForLoan(amount: number): void;
+}
+
+interface Insurance {
+  applyForInsurance(policy: string): void;
+}
+
+class PayPal extends PaymentGateway implements SecurePayment {
+  authenticateUser(userId: string): boolean {
+    console.log(`Authenticating user: ${userId}`);
+    return true; 
+  }
+
+  validateTransaction(transactionId: string): boolean {
+    console.log(`Validating transaction: ${transactionId}`);
+    return true; 
+  }
+}
+
+class CreditCard implements PaymentMethod {
+  private balance: number;
+
+  constructor(balance: number) {
+    this.balance = balance;
+  }
+
+  pay(amount: number): void {
+    if (amount <= this.balance) {
+      this.balance -= amount;
+      console.log(`Paid $${amount} using Credit Card. Remaining balance: $${this.balance}`);
+    } else {
+      console.log("Insufficient balance in Credit Card.");
+    }
+  }
+
+  refund(amount: number): void {
+    this.balance += amount;
+    console.log(`Refunded $${amount} to Credit Card. New balance: $${this.balance}`);
+  }
+}
+
+class DebitCard implements PaymentMethod {
+  private balance: number;
+
+  constructor(balance: number) {
+    this.balance = balance;
+  }
+
+  pay(amount: number): void {
+    if (amount <= this.balance) {
+      this.balance -= amount;
+      console.log(`Paid $${amount} using Debit Card. Remaining balance: $${this.balance}`);
+    } else {
+      console.log("Insufficient balance in Debit Card.");
+    }
+  }
+
+  refund(amount: number): void {
+    this.balance += amount;
+    console.log(`Refunded $${amount} to Debit Card. New balance: $${this.balance}`);
+  }
+}
+
+class UPI implements PaymentMethod {
+  private balance: number;
+
+  constructor(balance: number) {
+    this.balance = balance;
+  }
+
+  pay(amount: number): void {
+    if (amount <= this.balance) {
+      this.balance -= amount;
+      console.log(`Paid $${amount} using UPI. Remaining balance: $${this.balance}`);
+    } else {
+      console.log("Insufficient balance in UPI account.");
+    }
+  }
+
+  refund(amount: number): void {
+    this.balance += amount;
+    console.log(`Refunded $${amount} to UPI account. New balance: $${this.balance}`);
+  }
+}
+
+class Customer implements Loan, Insurance {
+  private loanAmount: number = 0;
+  private insurancePolicy: string = "";
+
+  applyForLoan(amount: number): void {
+    this.loanAmount = amount;
+    console.log(`Loan of $${amount} applied successfully.`);
+  }
+
+  applyForInsurance(policy: string): void {
+    this.insurancePolicy = policy;
+    console.log(`Insurance policy '${policy}' applied successfully.`);
+  }
+}
+
+// Testing the implementation
+const paypal = new PayPal();
+paypal.processPayment(100);
+paypal.processRefund(50);
+console.log(`User authenticated: ${paypal.authenticateUser("Punah24")}`);
+console.log(`Transaction valid: ${paypal.validateTransaction("sreetha26")}`);
+
+const creditCard = new CreditCard(1000);
+creditCard.pay(200);
+creditCard.refund(50);
+
+const debitCard = new DebitCard(500);
+debitCard.pay(300);
+debitCard.refund(100);
+
+const upi = new UPI(700);
+upi.pay(400);
+upi.refund(200);
+
+const customer = new Customer();
+customer.applyForLoan(5000);
+customer.applyForInsurance("Health Insurance");
